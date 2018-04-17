@@ -1,3 +1,4 @@
+README
 # Docker SSOO
 
 Docker implementation for SSOO TP.

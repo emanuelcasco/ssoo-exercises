@@ -20,7 +20,8 @@ int main(void) {
   char* user;
   char* dominio;
   mail_split(mail, &user, &dominio);
-  printf("3)  User: %s & Dominio: %s!!\n", user, dominio);
+  printf("3)   user: '%s'/dominio: '%s'\n", user, dominio);
+  free(user);
   
   return 0;
 }
@@ -35,8 +36,10 @@ int main(void) {
 *   saludo = "Hola Ritchie"
 */
 char* string_concat (const char* str1, const char* str2) {
-  char* new_str = malloc(sizeof(str1) + sizeof(str2));
-  return strcat(strcat(new_str, str1), str2);
+  char* result = malloc(sizeof(str1) + sizeof(str2) + 1);
+  strcpy(result, str1);
+  strcat(result, str2);
+  return result;
 }
 
 /*
@@ -49,9 +52,10 @@ char* string_concat (const char* str1, const char* str2) {
 *   =>
 *   saludo = "Hola Ritchie"
 */
-void string_concat_dinamyc (const char* str1, const char* str2, char* *new_str) {
-  *new_str = malloc(sizeof(str1) + sizeof(str2));
-  strcat(strcat(*new_str, str1), str2);
+void string_concat_dinamyc (const char* str1, const char* str2, char** result) {
+  *result = malloc(sizeof(str1) + sizeof(str2) + 1);
+  strcpy(*result, str1);
+  strcat(*result, str2);
 }
 
 /*
@@ -65,8 +69,22 @@ void string_concat_dinamyc (const char* str1, const char* str2, char* *new_str) 
 *   user = "ritchie"
 *   dominio = "ansic.com.ar"
 */
+
+void splitAfter(const char* string, char ch, char** result) {
+  *result = strchr(string, ch) + 1;
+}
+
+void splitBefore(const char* string, char ch, char** result) {
+  int i = 0;
+  while(i < strlen(string)) {
+    if (string[i] == ch) break;
+    i++;
+  }
+  *result = strndup(string, i);
+}
+
 void mail_split(const char* mail, char** user, char** dominio) {
-  char *ret = memchr(mail, '@', strlen(mail));
-  *dominio = ret + 1;
-  // printf("%s", dominio);
+  int c = '@';
+  splitAfter(mail, c, dominio);
+  splitBefore(mail, c, user);
 }
