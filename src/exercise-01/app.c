@@ -7,7 +7,8 @@ void mail_split(const char* mail, char** user, char** dominio);
 int main(void) {
 // Punto a
   char* nombre = "Ema";
-  printf("1)   %s!!\n", string_concat("Hola ", nombre));
+  char * string = string_concat("Hola ", nombre);
+  printf("1)   %s!!\n", string);
 // Punto b
   char* cat;
   string_concat_dinamyc("Hola ", nombre, &cat);
@@ -33,7 +34,7 @@ int main(void) {
 *   saludo = "Hola Ritchie"
 */
 char* string_concat (const char* str1, const char* str2) {
-  char new_str[ strlen(str1) + strlen(str2) ];
+  char* new_str = malloc(sizeof(str1) + sizeof(str2));
   return strcat(strcat(new_str, str1), str2);
 }
 
