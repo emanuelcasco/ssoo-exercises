@@ -9,6 +9,7 @@ int main(void) {
   char* nombre = "Ema";
   char * string = string_concat("Hola ", nombre);
   printf("1)   %s!!\n", string);
+  free(string);
 // Punto b
   char* cat;
   string_concat_dinamyc("Hola ", nombre, &cat);
