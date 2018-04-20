@@ -1,18 +1,6 @@
 #include "fileman.h"
 
-typedef struct file {
-  char* name;
-  char* method;
-  FILE* fp;
-} fileman;
-
-// open_file (file, method)
-// close_file (file)
-// read_file_line (line_number, file)
-// map_file_lines (function, file)
-// map_list_and_save (list, function, file)
-
-fileman * fmopen (char * name, char * method) {
+fileman * fm_open (char * name, char * method) {
   fileman * fm = malloc(sizeof(fileman));
   fm->name = name;
   fm->method = method;
@@ -23,11 +11,11 @@ fileman * fmopen (char * name, char * method) {
   return fm;
 }
 
-void fmwrite(fileman * fm, char * text) {
+void fm_write(fileman * fm, char * text) {
   fprintf(fm->fp, "%s\n", text);
 }
 
-int fmcountlines(int maxlength, fileman * fm) {
+int fm_countlines(int maxlength, fileman * fm) {
   int count = 0;
   char line[maxlength];
   while (fgets(line, maxlength * sizeof(char), fm->fp) != NULL) {
@@ -36,7 +24,7 @@ int fmcountlines(int maxlength, fileman * fm) {
   return count;
 }
 
-char* fmread(int maxlength, fileman * fm) {
+char* fm_read(int maxlength, fileman * fm) {
   int count = 0;
   char * line = malloc(maxlength * sizeof(char));
   while (fgets(line, maxlength * sizeof(char), fm->fp) != NULL) {
@@ -45,7 +33,7 @@ char* fmread(int maxlength, fileman * fm) {
   return line;
 }
 
-char* fmreadline(int lineNumber, int maxlength, fileman * fm) {
+char* fm_readline(int lineNumber, int maxlength, fileman * fm) {
   int count = 0;
   char * line = malloc(maxlength * sizeof(char));
   while (fgets(line, maxlength * sizeof(char), fm->fp) != NULL && count != lineNumber) {
@@ -54,15 +42,24 @@ char* fmreadline(int lineNumber, int maxlength, fileman * fm) {
   return line;
 }
 
-void fmmaplines(int maxlength, fileman * fm) {
-  int count = 0;
-  char * line = malloc(maxlength * sizeof(char));
-  while (fgets(line, maxlength * sizeof(char), fm->fp) != NULL) {
-    printf("%s", line);
+void fm_mapfile(int maxlength, void (*f)(char*),fileman * fm) {
+  int count = 0, length = maxlength * sizeof(char);
+  char * line = malloc(length);
+  while (fgets(line, length, fm->fp) != NULL) {
+    (*f)(line);
   }
 }
 
-void fmclose(fileman * fm) {
+void fm_maplist(node_t* head, char* (*f)(char*), fileman * fm) {
+  node_t * current = head;
+
+  while (current != NULL) {
+    fm_write(fm, current->data);
+    current = current->next;
+  }
+}
+
+void fm_close(fileman * fm) {
   fclose(fm->fp);
   free(fm);
 }
